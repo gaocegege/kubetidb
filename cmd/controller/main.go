@@ -67,7 +67,7 @@ func main() {
 	// This is to solve https://github.com/golang/glog/commit/65d674618f712aa808a7d0104131b9206fc3d5ad, which is definitely NOT cool.
 	flag.Parse()
 
-	glog.Infof("kubeflow-controller Version: %v", version.Version)
+	glog.Infof("kubetidb Version: %v", version.Version)
 	glog.Infof("Git SHA: %s", version.GitSHA)
 	glog.Infof("Go Version: %s", runtime.Version())
 	glog.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
