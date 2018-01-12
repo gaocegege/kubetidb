@@ -17,31 +17,24 @@ type TiDB struct {
 }
 
 type ClusterSpec struct {
-	PDSpec   PDSpec   `json:"pd"`
-	TiKVSpec TiKVSpec `json:"tikv"`
-	TiDBSpec TiDBSpec `json:"tidb"`
+	Specs []ComponentSpec `json:"specs"`
 }
 
-type PDSpec struct {
+type ComponentSpec struct {
 	// Optional. The number of desired replicas. Default 1.
 	Replicas *int32 `json:"replicas,omitempty"`
+	Type     ComponentType
 	// Template describes the data a pod should have when created from a template
 	Template *v1.PodTemplateSpec `json:"template,omitempty"`
 }
 
-type TiKVSpec struct {
-	// Optional. The number of desired replicas. Default 1.
-	Replicas *int32 `json:"replicas,omitempty"`
-	// Template describes the data a pod should have when created from a template
-	Template *v1.PodTemplateSpec `json:"template,omitempty"`
-}
+type ComponentType string
 
-type TiDBSpec struct {
-	// Optional. The number of desired replicas. Default 1.
-	Replicas *int32 `json:"replicas,omitempty"`
-	// Template describes the data a pod should have when created from a template
-	Template *v1.PodTemplateSpec `json:"template,omitempty"`
-}
+const (
+	TypePD   ComponentType = "pd"
+	TypeTiKV               = "tikv"
+	TypeTiDB               = "tidb"
+)
 
 // ClusterStatus define the most recently observed status of the cluster.
 type ClusterStatus struct {

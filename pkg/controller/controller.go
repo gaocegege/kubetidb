@@ -21,6 +21,7 @@ import (
 	api "github.com/gaocegege/kubetidb/pkg/apis/tidb/v1alpha1"
 	clientset "github.com/gaocegege/kubetidb/pkg/clientset/versioned"
 	tidbscheme "github.com/gaocegege/kubetidb/pkg/clientset/versioned/scheme"
+	"github.com/gaocegege/kubetidb/pkg/controller/control"
 	informers "github.com/gaocegege/kubetidb/pkg/informers/externalversions"
 	listers "github.com/gaocegege/kubetidb/pkg/listers/tidb/v1alpha1"
 )
@@ -54,6 +55,8 @@ type Controller struct {
 	// Kubernetes API.
 	recorder record.EventRecorder
 
+	helper HelperInterface
+
 	// A TTLCache of tidb creates/deletes each rc expects to see
 	expectations controller.ControllerExpectationsInterface
 }
@@ -67,6 +70,21 @@ func NewController(
 
 	// obtain references to shared index informers for the tfJob type
 	tidbInformer := tidbInformerFactory.Kubetidb().V1alpha1().TiDBs()
+	podInformer := kubeInformerFactory.Core().V1().Pods()
+	serviceInformer := kubeInformerFactory.Core().V1().Services()
+
+	podControl := controller.RealPodControl{
+		KubeClient: kubeclientset,
+		Recorder:   eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: controllerName}),
+	}
+	serviceControl := control.RealServiceControl{
+		KubeClient: kubeclientset,
+		Recorder:   eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: controllerName}),
+	}
+	podLister := podInformer.Lister()
+	serviceLister := serviceInformer.Lister()
+
+	helper := NewHelper(tidbClientset, podLister, podControl, serviceLister, serviceControl)
 
 	// Create event broadcaster
 	// Add tfJob-controller types to the default Kubernetes Scheme so Events can be
@@ -85,6 +103,7 @@ func NewController(
 		expectations:  controller.NewControllerExpectations(),
 		tidbSynced:    tidbInformer.Informer().HasSynced,
 		workqueue:     workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "tfJobs"),
+		helper:        helper,
 		recorder:      recorder,
 	}
 
@@ -95,8 +114,6 @@ func NewController(
 		UpdateFunc: controller.updateTiDB,
 		DeleteFunc: controller.deleteTiDB,
 	})
-
-	controller.tidbLister = tidbInformer.Lister()
 
 	return controller
 }
@@ -137,6 +154,7 @@ func (c *Controller) syncHandler(key string) error {
 
 func (c *Controller) syncCluster(TiDB *api.TiDB) {
 	glog.V(4).Infof("Sync TiDB: %v", *TiDB)
+
 }
 
 // Run will set up the event handlers for types we are interested in, as well
