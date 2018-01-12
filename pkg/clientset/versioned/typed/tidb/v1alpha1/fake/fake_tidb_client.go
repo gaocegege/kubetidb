@@ -26,8 +26,8 @@ type FakeKubetidbV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeKubetidbV1alpha1) TiDBClusters(namespace string) v1alpha1.TiDBClusterInterface {
-	return &FakeTiDBClusters{c, namespace}
+func (c *FakeKubetidbV1alpha1) TiDBs(namespace string) v1alpha1.TiDBInterface {
+	return &FakeTiDBs{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

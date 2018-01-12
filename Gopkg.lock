@@ -255,13 +255,13 @@
 [[projects]]
   branch = "master"
   name = "k8s.io/code-generator"
-  packages = ["cmd/client-gen","cmd/client-gen/args","cmd/client-gen/generators","cmd/client-gen/generators/fake","cmd/client-gen/generators/scheme","cmd/client-gen/generators/util","cmd/client-gen/path","cmd/client-gen/types","cmd/deepcopy-gen","cmd/deepcopy-gen/args","cmd/informer-gen","cmd/informer-gen/args","cmd/informer-gen/generators","cmd/lister-gen","cmd/lister-gen/args","cmd/lister-gen/generators","pkg/util"]
+  packages = ["cmd/client-gen","cmd/client-gen/args","cmd/client-gen/generators","cmd/client-gen/generators/fake","cmd/client-gen/generators/scheme","cmd/client-gen/generators/util","cmd/client-gen/path","cmd/client-gen/types","cmd/deepcopy-gen","cmd/deepcopy-gen/args","cmd/defaulter-gen","cmd/defaulter-gen/args","cmd/informer-gen","cmd/informer-gen/args","cmd/informer-gen/generators","cmd/lister-gen","cmd/lister-gen/args","cmd/lister-gen/generators","pkg/util"]
   revision = "3b3a91bf28442c1f44921e05b43d57bbfb2398cb"
 
 [[projects]]
   branch = "master"
   name = "k8s.io/gengo"
-  packages = ["args","examples/deepcopy-gen/generators","examples/set-gen/sets","generator","namer","parser","types"]
+  packages = ["args","examples/deepcopy-gen/generators","examples/defaulter-gen/generators","examples/set-gen/sets","generator","namer","parser","types"]
   revision = "1ef560bbde5195c01629039ad3b337ce63e7b321"
 
 [[projects]]
@@ -279,6 +279,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "72dbe984247c3480c0316a78771055a6153625a1fe9bc732bcdebf7866cd2be0"
+  inputs-digest = "aeeaac72b9cb0a9053cdc2c4d5b2719320f97812cd4eb18fa9d88986bacd1c98"
   solver-name = "gps-cdcl"
   solver-version = 1

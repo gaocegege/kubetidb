@@ -53,8 +53,8 @@ func (f *genericInformer) Lister() cache.GenericLister {
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
 	// Group=kubetidb.gaocegege.com, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithResource("tidbclusters"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Kubetidb().V1alpha1().TiDBClusters().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("tidbs"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Kubetidb().V1alpha1().TiDBs().Informer()}, nil
 
 	}
 

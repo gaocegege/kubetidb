@@ -27,21 +27,21 @@ import (
 
 const (
 	controllerName = "kubetidb"
-	// SuccessSynced is used as part of the Event 'reason' when a TiDBCluster is synced
+	// SuccessSynced is used as part of the Event 'reason' when a TiDB is synced
 	SuccessSynced = "Synced"
 
-	// MessageResourceSynced is the message used for an Event fired when a TiDBCluster
+	// MessageResourceSynced is the message used for an Event fired when a TiDB
 	// is synced successfully
 	MessageResourceSynced = "TiDB synced successfully"
 )
 
-// Controller is the type for TiDBCluster controller.
+// Controller is the type for TiDB controller.
 type Controller struct {
 	// kubeclientset is a standard kubernetes clientset
 	kubeclientset kubernetes.Interface
 	// tidbClientset is a clientset for our own API group
 	tidbClientset clientset.Interface
-	tidbLister    listers.TiDBClusterLister
+	tidbLister    listers.TiDBLister
 	tidbSynced    cache.InformerSynced
 
 	// workqueue is a rate limited work queue. This is used to queue work to be
@@ -66,7 +66,7 @@ func NewController(
 	tidbInformerFactory informers.SharedInformerFactory) *Controller {
 
 	// obtain references to shared index informers for the tfJob type
-	tidbInformer := tidbInformerFactory.Kubetidb().V1alpha1().TiDBClusters()
+	tidbInformer := tidbInformerFactory.Kubetidb().V1alpha1().TiDBs()
 
 	// Create event broadcaster
 	// Add tfJob-controller types to the default Kubernetes Scheme so Events can be
@@ -91,9 +91,9 @@ func NewController(
 	glog.Info("Setting up event handlers")
 	// Set up an event handler for when tfJob resources change
 	tidbInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    controller.addTiDBCluster,
-		UpdateFunc: controller.updateTiDBCluster,
-		DeleteFunc: controller.deleteTiDBCluster,
+		AddFunc:    controller.addTiDB,
+		UpdateFunc: controller.updateTiDB,
+		DeleteFunc: controller.deleteTiDB,
 	})
 
 	controller.tidbLister = tidbInformer.Lister()
@@ -118,7 +118,7 @@ func (c *Controller) syncHandler(key string) error {
 	needsSync := c.expectations.SatisfiedExpectations(key)
 
 	// Get the TFJob resource with this namespace/name
-	tidbCluster, err := c.tidbLister.TiDBClusters(namespace).Get(name)
+	TiDB, err := c.tidbLister.TiDBs(namespace).Get(name)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			glog.V(4).Infof("Job has been deleted: %v", key)
@@ -129,14 +129,14 @@ func (c *Controller) syncHandler(key string) error {
 	}
 
 	if needsSync {
-		c.syncCluster(tidbCluster)
+		c.syncCluster(TiDB)
 	}
 
 	return nil
 }
 
-func (c *Controller) syncCluster(tidbCluster *api.TiDBCluster) {
-	glog.V(4).Infof("Sync TiDBCluster: %v", *tidbCluster)
+func (c *Controller) syncCluster(TiDB *api.TiDB) {
+	glog.V(4).Infof("Sync TiDB: %v", *TiDB)
 }
 
 // Run will set up the event handlers for types we are interested in, as well
@@ -211,7 +211,7 @@ func (c *Controller) processNextWorkItem() bool {
 			return nil
 		}
 		// Run the syncHandler, passing it the namespace/name string of the
-		// TiDBCluster resource to be synced.
+		// TiDB resource to be synced.
 		if err := c.syncHandler(key); err != nil {
 			return fmt.Errorf("error syncing '%s': %s", key, err.Error())
 		}
@@ -230,28 +230,28 @@ func (c *Controller) processNextWorkItem() bool {
 	return true
 }
 
-func (c *Controller) addTiDBCluster(obj interface{}) {
-	c.enqueueTiDBCluster(obj)
+func (c *Controller) addTiDB(obj interface{}) {
+	c.enqueueTiDB(obj)
 }
 
-func (c *Controller) updateTiDBCluster(old, new interface{}) {
+func (c *Controller) updateTiDB(old, new interface{}) {
 	glog.Info("Update TiDB cluster")
-	newCluster := new.(*api.TiDBCluster)
-	oldCluster := old.(*api.TiDBCluster)
+	newCluster := new.(*api.TiDB)
+	oldCluster := old.(*api.TiDB)
 	if newCluster.ResourceVersion == oldCluster.ResourceVersion {
 		glog.Infof("ResourceVersion not changed: %s", newCluster.ResourceVersion)
 		// Periodic resync will send update events for all known tfJobes.
 		// Two different versions of the same tfJob will always have different RVs.
 		return
 	}
-	c.enqueueTiDBCluster(newCluster)
+	c.enqueueTiDB(newCluster)
 }
 
-func (c *Controller) deleteTiDBCluster(obj interface{}) {
+func (c *Controller) deleteTiDB(obj interface{}) {
 	glog.Errorln("To Be Implemented.")
 }
 
-func (c *Controller) enqueueTiDBCluster(obj interface{}) {
+func (c *Controller) enqueueTiDB(obj interface{}) {
 	var key string
 	var err error
 	if key, err = cache.MetaNamespaceKeyFunc(obj); err != nil {

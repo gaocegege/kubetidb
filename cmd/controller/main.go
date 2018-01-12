@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"os"
+	"runtime"
 	"time"
 
 	"github.com/golang/glog"
@@ -13,16 +15,16 @@ import (
 	"github.com/gaocegege/kubetidb/pkg/controller"
 	tidbInformers "github.com/gaocegege/kubetidb/pkg/informers/externalversions"
 	"github.com/gaocegege/kubetidb/pkg/util/signals"
+	"github.com/gaocegege/kubetidb/pkg/version"
 )
 
 var (
-	masterURL  string
-	kubeconfig string
+	masterURL    string
+	printVersion bool
+	kubeconfig   string
 )
 
-func main() {
-	flag.Parse()
-
+func run() {
 	// set up signals so we handle the first shutdown signal gracefully
 	stopCh := signals.SetupSignalHandler()
 
@@ -58,4 +60,19 @@ func main() {
 func init() {
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&masterURL, "master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
+	flag.BoolVar(&printVersion, "version", false, "Show version and quit")
+}
+
+func main() {
+	// This is to solve https://github.com/golang/glog/commit/65d674618f712aa808a7d0104131b9206fc3d5ad, which is definitely NOT cool.
+	flag.Parse()
+
+	glog.Infof("kubeflow-controller Version: %v", version.Version)
+	glog.Infof("Git SHA: %s", version.GitSHA)
+	glog.Infof("Go Version: %s", runtime.Version())
+	glog.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	if printVersion {
+		os.Exit(0)
+	}
+	run()
 }

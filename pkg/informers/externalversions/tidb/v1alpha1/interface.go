@@ -24,8 +24,8 @@ import (
 
 // Interface provides access to all the informers in this group version.
 type Interface interface {
-	// TiDBClusters returns a TiDBClusterInformer.
-	TiDBClusters() TiDBClusterInformer
+	// TiDBs returns a TiDBInformer.
+	TiDBs() TiDBInformer
 }
 
 type version struct {
@@ -39,7 +39,7 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 	return &version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}
 }
 
-// TiDBClusters returns a TiDBClusterInformer.
-func (v *version) TiDBClusters() TiDBClusterInformer {
-	return &tiDBClusterInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+// TiDBs returns a TiDBInformer.
+func (v *version) TiDBs() TiDBInformer {
+	return &tiDBInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

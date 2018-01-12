@@ -9,7 +9,7 @@ import (
 // +genclient:noStatus
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type TiDBCluster struct {
+type TiDB struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 	Spec              ClusterSpec   `json:"spec"`
@@ -17,9 +17,9 @@ type TiDBCluster struct {
 }
 
 type ClusterSpec struct {
-	PDSpec   PDSpec   `json:"pdSpec"`
-	TiKVSpec TiKVSpec `json:"tikvSpec"`
-	TiDBSpec TiDBSpec `json:"tidbSpec"`
+	PDSpec   PDSpec   `json:"pd"`
+	TiKVSpec TiKVSpec `json:"tikv"`
+	TiDBSpec TiDBSpec `json:"tidb"`
 }
 
 type PDSpec struct {
@@ -109,9 +109,9 @@ const (
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // TiDBList is a list of Foo resources
-type TiDBClusterList struct {
+type TiDBList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata"`
 
-	Items []TiDBCluster `json:"items"`
+	Items []TiDB `json:"items"`
 }

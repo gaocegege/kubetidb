@@ -25,7 +25,7 @@ import (
 
 type KubetidbV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	TiDBClustersGetter
+	TiDBsGetter
 }
 
 // KubetidbV1alpha1Client is used to interact with features provided by the kubetidb.gaocegege.com group.
@@ -33,8 +33,8 @@ type KubetidbV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *KubetidbV1alpha1Client) TiDBClusters(namespace string) TiDBClusterInterface {
-	return newTiDBClusters(c, namespace)
+func (c *KubetidbV1alpha1Client) TiDBs(namespace string) TiDBInterface {
+	return newTiDBs(c, namespace)
 }
 
 // NewForConfig creates a new KubetidbV1alpha1Client for the given config.

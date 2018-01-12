@@ -18,10 +18,10 @@ limitations under the License.
 
 package v1alpha1
 
-// TiDBClusterListerExpansion allows custom methods to be added to
-// TiDBClusterLister.
-type TiDBClusterListerExpansion interface{}
+// TiDBListerExpansion allows custom methods to be added to
+// TiDBLister.
+type TiDBListerExpansion interface{}
 
-// TiDBClusterNamespaceListerExpansion allows custom methods to be added to
-// TiDBClusterNamespaceLister.
-type TiDBClusterNamespaceListerExpansion interface{}
+// TiDBNamespaceListerExpansion allows custom methods to be added to
+// TiDBNamespaceLister.
+type TiDBNamespaceListerExpansion interface{}
